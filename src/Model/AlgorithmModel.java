@@ -2,6 +2,7 @@ package Model;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AlgorithmModel {
@@ -56,14 +57,15 @@ public class AlgorithmModel {
      * a method to find a way with exhaustive algorithm.
      */
     private void exhaustiveMethod() {
-        ArrayList<ArrayList<Point>> permute = findPermute(locations);
+        ArrayList<ArrayList<Point>> permute = findPermute(locations.subList(1,locations.size()));
         float distance = Float.MAX_VALUE;
         for (ArrayList<Point> a : permute) {
-            float temp = calculate_path_cost(a);
+            float temp = calculate_path_cost(a, locations.get(0));
             if (temp <= distance) {
                 distance = temp;
                 way = a;
-                way.add(a.get(0));
+                way.add(locations.get(0));
+                way.add(0, locations.get(0));
             }
         }
         cost += distance;
@@ -74,11 +76,11 @@ public class AlgorithmModel {
      * @param arrayList is an array list that contains points.
      * @return a float digit that shows length of way.
      */
-    private float calculate_path_cost(ArrayList<Point> arrayList) {
-        float dis = 0;
+    private float calculate_path_cost(ArrayList<Point> arrayList,Point start) {
+        float dis = (float) Point.distance(start.x, start.y , arrayList.get(0).x,arrayList.get(0).y);
         for (int i = 0; i < arrayList.size() - 1; i++)
             dis += Point.distance(arrayList.get(i).x, arrayList.get(i).y, arrayList.get(i + 1).x, arrayList.get(i + 1).y);
-        dis += Point.distance(arrayList.get(arrayList.size() - 1).x, arrayList.get(arrayList.size() - 1).y, arrayList.get(0).x, arrayList.get(0).y);
+        dis += Point.distance(arrayList.get(arrayList.size() - 1).x, arrayList.get(arrayList.size() - 1).y, start.x, start.y);
         return dis;
     }
 
@@ -159,11 +161,11 @@ public class AlgorithmModel {
      * @param points arrayList.
      * @return list of all permute of a arrayList.
      */
-    private ArrayList<ArrayList<Point>> findPermute(ArrayList<Point> points) {
+    private ArrayList<ArrayList<Point>> findPermute(List<Point> points) {
         ArrayList<ArrayList<Point>> result = new ArrayList<>();
         //start from an empty list
         result.add(new ArrayList<>());
-        for (Point location : locations) {
+        for (Point location : points) {
             //list of list in current iteration of the array num
             ArrayList<ArrayList<Point>> current = new ArrayList<>();
 

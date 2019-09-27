@@ -24,7 +24,9 @@ public class Run {
         }
         model.execute(AlgorithmModel.NEAREST_NEIGHBOR);
         model.printWay();
+//        model.printLocations();
         model.execute(AlgorithmModel.EXHAUSTIVE);
         model.printWay();
+//        model.printLocations();
     }
 }
