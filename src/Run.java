@@ -22,8 +22,9 @@ public class Run {
                 e.printStackTrace();
             }
         }
-
         model.execute(AlgorithmModel.NEAREST_NEIGHBOR);
+        model.printWay();
+        model.execute(AlgorithmModel.EXHAUSTIVE);
         model.printWay();
     }
 }

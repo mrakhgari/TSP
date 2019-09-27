@@ -27,6 +27,7 @@ public class AlgorithmModel {
 
     /**
      * add point to location arrayList.
+     *
      * @param point is a object of Point Class that contains x and y of location.
      */
     public void addLocation(Point point) {
@@ -51,8 +52,34 @@ public class AlgorithmModel {
         }
     }
 
+    /**
+     * a method to find a way with exhaustive algorithm.
+     */
     private void exhaustiveMethod() {
+        ArrayList<ArrayList<Point>> permute = findPermute(locations);
+        float distance = Float.MAX_VALUE;
+        for (ArrayList<Point> a : permute) {
+            float temp = calculate_path_cost(a);
+            if (temp <= distance) {
+                distance = temp;
+                way = a;
+                way.add(a.get(0));
+            }
+        }
+        cost += distance;
+    }
 
+    /**
+     * a method to calculate difference of points in the way.
+     * @param arrayList is an array list that contains points.
+     * @return a float digit that shows length of way.
+     */
+    private float calculate_path_cost(ArrayList<Point> arrayList) {
+        float dis = 0;
+        for (int i = 0; i < arrayList.size() - 1; i++)
+            dis += Point.distance(arrayList.get(i).x, arrayList.get(i).y, arrayList.get(i + 1).x, arrayList.get(i + 1).y);
+        dis += Point.distance(arrayList.get(arrayList.size() - 1).x, arrayList.get(arrayList.size() - 1).y, arrayList.get(0).x, arrayList.get(0).y);
+        return dis;
     }
 
     public ArrayList<Point> getWay() {
@@ -63,6 +90,11 @@ public class AlgorithmModel {
         return cost;
     }
 
+    /**
+     * a method that find nearest neighbor of a point.
+     * @param src start point.
+     * @return nearest neighbor.
+     */
     private Point getNearestNeighbor(Point src) {
         Point des = null;
         int index = -1;
@@ -83,11 +115,10 @@ public class AlgorithmModel {
         return des;
     }
 
-
-    public ArrayList<Point> getLocations() {
-        return locations;
-    }
-
+    /**
+     * a method to find a way with nearest neighbor algorithm.
+     * @param start is start point.
+     */
     private void nearestNeighborMethod(Point start) {
         visited = new ArrayList<>();
         way.add(start);
@@ -103,6 +134,10 @@ public class AlgorithmModel {
         cost += (float) Point.distance(start.x, start.y, nextPosition.x, nextPosition.y);
     }
 
+    public ArrayList<Point> getLocations() {
+        return locations;
+    }
+
     public void printWay() {
         System.out.println("The way is ...");
         for (int i = 0; i < way.size() - 1; i++)
@@ -112,6 +147,43 @@ public class AlgorithmModel {
 
     public void printLocations() {
         for (Point p : locations) System.out.println("Point is (" + p.x + ", " + p.y + ")");
+    }
+
+    public void printP(ArrayList<ArrayList<Point>> result) {
+        for (ArrayList a : result)
+            System.out.println(a);
+    }
+
+    /**
+     * a method for find all of permute of a arrayList.
+     * @param points arrayList.
+     * @return list of all permute of a arrayList.
+     */
+    private ArrayList<ArrayList<Point>> findPermute(ArrayList<Point> points) {
+        ArrayList<ArrayList<Point>> result = new ArrayList<>();
+        //start from an empty list
+        result.add(new ArrayList<>());
+        for (Point location : locations) {
+            //list of list in current iteration of the array num
+            ArrayList<ArrayList<Point>> current = new ArrayList<>();
+
+            for (ArrayList<Point> l : result) {
+                // # of locations to insert is largest index + 1
+                for (int j = 0; j < l.size() + 1; j++) {
+                    // + add num[i] to different locations
+                    l.add(j, location);
+
+                    ArrayList<Point> temp = new ArrayList<>(l);
+                    current.add(temp);
+
+                    // - remove num[i] add
+                    l.remove(j);
+                }
+            }
+
+            result = new ArrayList<>(current);
+        }
+        return result;
     }
 
 }
