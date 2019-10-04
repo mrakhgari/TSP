@@ -1,32 +1,34 @@
+import Controller.AlgorithmController;
 import Model.AlgorithmModel;
+import View.AlgorithmView;
+import View.Constants;
+import View.MainFrame;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 public class Run {
+    private static MainFrame startFrame;
+
     public static void main(String[] args) {
-        AlgorithmModel model = new AlgorithmModel();
-        Scanner s = new Scanner(System.in);
-        int n = s.nextInt();
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        for (int i = 0; i < n; i++) {
-            int[] arr ;
-            try {
-                arr = Arrays.stream(in.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-                model.addLocation(new Point(arr[0], arr[1]));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        startFrame = new MainFrame(Constants.TITLE, Constants.WELCOME_MESSAGE);
+        startFrame.startSearchWay(new StartListener());
+    }
+
+    private static class StartListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            AlgorithmModel algorithmModel = new AlgorithmModel();
+            String mapAddress = "Random.txt";
+            File map;
+            startFrame.setVisible(false);
+            if (startFrame.isRandom()) {
+                RandomGenerator randomGenerator = new RandomGenerator(10);
+                map = RandomGenerator.writeInFile(mapAddress, randomGenerator.generator());
+            } else
+                map = startFrame.getMap();
+            AlgorithmController algorithmController = new AlgorithmController(algorithmModel, new AlgorithmView(), map, startFrame.getMethod());
         }
-        model.execute(AlgorithmModel.NEAREST_NEIGHBOR);
-        model.printWay();
-//        model.printLocations();
-        model.execute(AlgorithmModel.EXHAUSTIVE);
-        model.printWay();
-//        model.printLocations();
     }
 }
